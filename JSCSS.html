@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<script>
+console.log(
+"null == undefined ==>" + (null == undefined) +"\n"
++"0xA ==>" + 0xA +"\n"
++"0.000003 ==>" + 0.000003 +"\n"
++"0.0000003 ==>" + 0.0000003+"\n"
++"Number.MAX_VALUE ==>" + Number.MAX_VALUE+"\n"
++"Number.MIN_VALUE_VALUE ==>" + Number.MIN_VALUE+"\n"
++"Number.NEGATIVE_INFINITY ==>" + Number.NEGATIVE_INFINITY+"\n"
++"Number.POSITIVE_INFINITY ==>" + Number.POSITIVE_INFINITY+"\n"
++"isFinite(Number.MAX_VALUE+Number.MIN_VALUE) ==>"+isFinite(Number.MAX_VALUE+Number.MIN_VALUE)+"\n"
++"isFinite(Number.MAX_VALUE+Number.MAX_VALUE) ==>"+isFinite(Number.MAX_VALUE+Number.MAX_VALUE)+"\n"
++"isFinite(Number.MAX_VALUE+1) ==>"+isFinite(Number.MAX_VALUE+1)+"\n"
++"isFinite(Number.MAX_VALUE+100000000000000000000) ==>"+isFinite(Number.MAX_VALUE+100000000000000000000)+"\n"
++"isFinite(Number.MAX_VALUE) ==>"+isFinite(Number.MAX_VALUE)+"\n"
++"NaN == NaN ==>"+(NaN == NaN)+"\n"
+);
+var person = {};
+	Object.defineProperty(
+		person,
+		"name",
+		{
+			writable: false,	//is "person.name = "Greg";" make sense
+			configurable: false, //is "delete person.name;" make sense
+			value: "Nicolas"
+		}
+	);
+	alert(person.name); //"Nicolas"
+	person.name = "Greg";
+	delete person.name;
+	alert(person.name); //"Nicolas"
+	var desc = Object.getOwnPropertyDescriptor(person, "name");
+	alert(desc.value);      	//"Nicolas"
+	alert(desc.configurable);	//false
+</script>
+</head>
+<body>
+
+
+<pre>
+javascript高级程序设计
+第一章javascript简介
+	ecmascript
+	DOM
+	BOM
+	
+第二章在HTML中使用javascript
+	&lt;script&gt;標簽在HTML中的位置
+		在&lt;head&gt;里，先加载加载执行javascript
+		在&lt;body&gt;里，先显示页面后执行javascript
+	&lt;script&gt;延迟脚本执行 defer="defer"
+	&lt;script&gt;异步脚本下载 async 或 async="async"
+	
+第三章基本概念
+	"use strict"指定函数在严格模式下执行
+	数据类型
+		typeof
+		Undefined类型 只有一个值为 undefined
+			var message；
+			//var age;
+			alert(message); 		//"undefined"
+			alert(age);     		//错误
+			alert(typeof message); 	//"undefined"
+			alert(typeof age);     	//"undefined"
+		Null类型 只有一个值为 null
+			var car = null;
+			alert(typeof car); 			//"object"
+			alert(null == undefined);	//true
+		Boolean类型 有两个值 true false 
+			区分大小写 True False 都不是Boolean类型 
+			if自动执行Boolean转换
+				var message = "hello world";
+				if(message){
+					alert("value is true");
+				}
+		Number类型 有两种值 整数值，浮点值。 还有NaN 
+			var intNum = 55; 	//整数值56
+			var octalNum = 070;	//八进制整数值56
+			var octalNum = 079;	//八进制0-7 ==> 9无效八进制 ==> 解释成整数值79
+			var octalNum = 08;	//八进制0-7 ==> 8无效八进制 ==> 解释成整数值8
+			var hexNum = 0xA;	//十六进制0-9A-F ==> 10
+			var hexNum = 0x1f;	//十六进制0-9A-F ==> 31
+			var floatNum = 1.1;
+			var floatNum = 0.1;
+			var floatNum = .1;
+			var floatNum = 1.; 	//整数值1
+			var floatNum = 1.0;	//整数值1
+			var floatNum = 3.125e7; //31250000
+			javascript浮点数精度有问题，小数点后17位，
+			e-7开始转成科学计数法
+				0.000003 ==> 0.000003
+				0.0000003 ==> 3e-7
+			取值范围
+				Number.MIN_VALUE ==> 5e-324
+				Number.MAX_VALUE ==> 1.7...e+308
+				超出范围被转成Infinity 和 -Infinity
+				isFinite()
+			NaN 未返回值 除零
+				NaN/10 			//NaN
+				NaN == NaN 		//false
+				isNaN(NaN) 		//true
+				isNaN("blue") 	//true
+				isNaN(true) 	//false true==1 false==0
+				isNaN(10) 		//false
+				isNaN("10") 	//false
+			转型 Number() parseInt() parseFloat()
+				true==1 false==0
+				null ==> 0
+				undefined ==> NaN
+				string ==> contained numner
+		String类型
+		Object类型 var 0 = new Object();
+			hasOwnProperty()
+			isPrototypeOf()
+			propertyIsEnumerable()
+			toLocalString()
+			toString()
+			valueOf()
+	操作符 
+		注意NaN Indefinite 的布尔操作
+		== ===
+	语句
+		with(引进作用域的对象)
+	函数
+		arguments arguments[i] arguments.callee
+		没有重载，只有覆盖
+
+第四章变量 作用域 内存
+	变量类型：基本类型，引用类型
+	值传递==>复制，阐述传递==>基本类型 复制值， 引用类型 复制引用指针（同一个实例）
+	typeof
+	function作用域链，逐级向上找。
+	with引进作用域
+	没有块级作用（if for while），只有function作用域。
+	手工回收 = null
+	
+第五章引用类型
+第六章面向对象的程序设计
+	var person = {};
+	Object.defineProperty(
+		person,
+		"name",
+		{
+			writable: false,	//is "person.name = "Greg";" make sense
+			configurable: false, //is "delete person.name;" make sense
+			value: "Nicolas"
+		}
+	);
+	alert(person.name); //"Nicolas"
+	person.name = "Greg";
+	delete person.name;
+	alert(person.name); //"Nicolas"
+	var desc = Object.getOwnPropertyDescriptor(person, "name");
+	alert(desc.value);      	//"Nicolas"
+	alert(desc.configurable);	//false
+	//----------------------------------------
+	var book = {
+		_year: 2004,
+		edition: 1
+	};
+	
+	Object.defineProperty(
+		book,
+		"year",
+		{
+			get: function(){
+				return this._year;
+			},
+			set: function(newValue){
+				this._year = newValue;
+				this.edition += newValue - 2004;
+			}
+		}
+		
+	);
+	book.year = 2005;
+	alert(book.edition);		//2
+	var desc = Object.getOwnPropertyDescriptor(book, "year");
+	alert(desc.value);      	//undefined
+	alert(desc.configurable);	//false
+	//----------------------------------------
+	__defineGetter__()
+	__defineSetter__()
+	//-------------------继承---------------------
+	function SuperType(){
+		this.color = ["red","blue","green"];
+	}
+	
+	function SubType(){
+		SuperType.call(this);
+	}
+	
+	var st = new SubType();
+	st.color.push("black");
+	alert(st.color);	//"red","blue","green","black"
+	
+	var st2 = new SuperType();
+	alert(st2.color);	//"red","blue","green"
+</pre>
+
+
+
+</body>
+</html>
