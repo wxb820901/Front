@@ -19,27 +19,11 @@ console.log(
 +"isFinite(Number.MAX_VALUE) ==>"+isFinite(Number.MAX_VALUE)+"\n"
 +"NaN == NaN ==>"+(NaN == NaN)+"\n"
 );
-var person = {};
-	Object.defineProperty(
-		person,
-		"name",
-		{
-			writable: false,	//is "person.name = "Greg";" make sense
-			configurable: false, //is "delete person.name;" make sense
-			value: "Nicolas"
-		}
-	);
-	alert(person.name); //"Nicolas"
-	person.name = "Greg";
-	delete person.name;
-	alert(person.name); //"Nicolas"
-	var desc = Object.getOwnPropertyDescriptor(person, "name");
-	alert(desc.value);      	//"Nicolas"
-	alert(desc.configurable);	//false
+
+
 </script>
 </head>
 <body>
-
 
 <pre>
 javascript高级程序设计
@@ -139,6 +123,7 @@ javascript高级程序设计
 	手工回收 = null
 	
 第五章引用类型
+
 第六章面向对象的程序设计
 	var person = {};
 	Object.defineProperty(
@@ -200,9 +185,192 @@ javascript高级程序设计
 	
 	var st2 = new SuperType();
 	alert(st2.color);	//"red","blue","green"
+	
+	
+	
+	
+第七章函数表达式
+	//----------------------------------------
+	两种创建方式：
+		function fName(args){...} 		//函数声明提升 function decalration hoisting 
+		var fName = function(args){...} //普通赋值
+		//it will be OK by 函数声明提升
+		sayHi();
+		function sayHi(){...}		
+		
+		
+		//it will be NOT OK by 普通赋值
+		sayHi();
+		var sayHi = function(){...}	
+		
+		
+		//it will be NOT OK by 函数声明提升. return B fucntion will cover renturn A
+		if(confition){
+			function sayHi(args){return A;}
+		}else{
+			function sayHi(args){return B;}
+		}							
+		
+		
+		//it will be OK by 普通赋值. 
+		var sayHi;
+		if(confition){
+			sayHi = function(args){return A;}
+		}else{
+			sayHi = function(args){return B;}
+		}							
+
+
+
+	//----------------------------------------
+	arguments.callee 解决function引用被赋值null
+	
+	
+	
+	
+	//----------------------------------------
+	作用域链*闭包
+		//1，内部匿名function 被销毁前，outterFunction作用域都一直存在。可能导致内存溢出问题==>在闭包的情况下，尽量手动把外层function的引用回收掉（=null）
+		function createFunction(args){
+			return function(obj1, obj2){
+				var v1 = obj1[args];
+				var v2 = obj2[args];
+				return v1 &lt; v2 ? -1 : (v1 == v2 ? 0 : 1);
+			};
+		}											
+		var func = createFunction("name");			//创建内部匿名function
+		var result = func({name:"1"},{name:"2"});	//执行内部匿名function
+		func = null;								//手动销毁内部匿名function，outterFunction作用域才能销毁
+		//----------------------------------------
+		//2，没有块级作用域，所以闭包可访问的外部作用域的改变，会影响闭包
+		function createFunction(){
+			var result = new Array();
+			for(var i = 0; i &lt; 10; i++){
+				result[i] = function(){				//所有被创建的内部匿名function，都返回10
+					return i;
+				}
+			}
+			return result;
+		}
+		//----------------------------------------
+		function createFunction(){
+			var result = new Array();
+			for(var i = 0; i &lt; 10; i++){
+				result[i] = function(num){			//把i当作参数传给被创建的内部匿名function，这样实际值被作为内部匿名function作用域的内容。
+					return i;
+				}(i);
+			}
+			return result;
+		}
+		//----------------------------------------
+		//3，this的转变
+		var name = "The Window";
+		var obj = {
+			name: "My Window",
+			getName: function(){
+				return this.name;
+			}
+		};
+		alert(obj.getName());//"My Window"
+		alert((obj.getName)());//"My Window"
+		alert((obj.getName = obj.getName )());		//"The Window" 复制后，getName的this从原来的obj的作用域变成新的function的作用域
+		//----------------------------------------
+		//4，模仿块级作用域 ==>针对没有块级作用域
+		function outputNumber(count){
+			(function(){
+				//块级作用域
+				for(var i = 0; i &lt; 10; i++){
+					alert(i);
+				}
+			})();
+			//i不能在这里调用了
+		}
+		//----------------------------------------
+		也常被用来 区隔 全局作用域
+		(function(){
+				//块级作用域
+		})();
+		//----------------------------------------
+		//5，getter，setter 将私有变量通过公有function泄露出去，露出内部function闭包访问作用域。
+		function MyObject(){
+			var privateVariable = 10;//私有变量
+			function privateFunction(){//私有function
+				return false;
+			}
+			
+			this.publicFunction = function(){//公有function
+				privateVariable++;
+				return privateFunction();
+			};
+		}
+		//----------------------------------------
+		(function(){
+			var privateVariable = 10;//私有变量
+			function privateFunction(){//私有function
+				return false;
+			}
+			
+			MyObject = function(){};//没有var，所以MyObject是全局变量
+			MyObject.prototype.publicFunction = function(){//公有function
+				privateVariable++;
+				return privateFunction();
+			};
+		})();
+		
+		var mo = new MyObject();
+		mo.publicFunction();//privateVariable和privateFunction变成全局作用域
+		
+		//----------------------------------------
+		//模块模式
+		var singleton = (function(){
+			var privateVariable = 10;//私有变量
+			function privateFunction(){//私有function
+				return false;
+			};
+			return {//公有
+				publicFunction : function(){
+					privateVariable++;
+					return privateFunction();
+				}
+			};
+		})();
+		//增强模块模式
+		var singleton = (function(){
+			var privateVariable = 10;//私有变量
+			function privateFunction(){//私有function
+				return false;
+			};
+			
+			var obj = new CustomeType();//任何所需类型
+			obj.publicpropery  = true; 
+			obj.publicFunction = function(){
+					privateVariable++;
+					return privateFunction();
+				}
+			};
+			return obj;
+		})();
+	
 </pre>
 
 
+<script>
+(function(){
+			var privateVariable = 10;//私有变量
+			function privateFunction(){//私有function
+				return false;
+			}
+			
+			MyObject = function(){};//没有var，所以MyObject是全局变量
+			MyObject.prototype.publicFunction = function(){//公有function
+				privateVariable++;
+				return privateFunction();
+			};
+		})();
+		
+		var mo = new MyObject();
 
+alert(mo.publicFunction());
+</script>
 </body>
 </html>
