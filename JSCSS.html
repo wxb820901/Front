@@ -170,6 +170,125 @@ javascript高级程序设计
 	//----------------------------------------
 	__defineGetter__()
 	__defineSetter__()
+	//----------------------------------------
+	//create object and design pattern
+	//merge constructor, factory and prototype for different require
+	
+	
+		//1, factory pattern --------------------------------------------------------------------------------
+		function createPerson(name, age, job){
+			var obj = new Object();
+			obj.name = name;
+			obj.age = age;
+			obj.job = job;
+			obj.sayName = function(){
+				alert(this.name);
+			};
+			return obj;
+		}
+		var person1 = createPerson("bill",30,"sse");
+
+		
+		//2, constructor pattern --------------------------------------------------------------------------------
+		function Person(name, age, job){
+			this.name = name;
+			this.age = age;
+			this.job = job;
+			this.sayName = function(){//different instance with defferent function here
+				alert(this.name);
+			};
+		}
+		var person1 = new Person("bill",30,"sse");
+		alert("person1.constructor == Person ==> "+(person1.constructor == Person));
+		alert("person1 instanceof Object ==> "+(person1 instanceof Object));
+		alert("person1 instanceof Person ==> "+(person1 instanceof Person));
+
+	
+		//3, prototype pattern --------------------------------------------------------------------------------
+			function Person(){}
+			Person.prototype.name = "Nicolas";
+			Person.prototype.age = 21;
+			Person.prototype.job = "SSE";
+			Person.prototype.sayName = function(){alert(this.name);};//different instance with same function here
+			
+			var person1 = new Person();
+			var person2 = new Person();
+			person1.sayName();
+			person2.sayName();
+			alert("person1.sayName == person2.sayName ==> "+(person1.sayName == person2.sayName));//true
+			alert("Person.prototype.isPrototypeOf(person1) ==> "+Person.prototype.isPrototypeOf(person1));//true
+			alert("Person.prototype.isPrototypeOf(person2) ==> "+Person.prototype.isPrototypeOf(person2));//true
+			alert("Object.getPrototypeOf(person1) == Person.prototype ==> "+(Object.getPrototypeOf(person1) == Person.prototype));//true
+			alert("Object.getPrototypeOf(person2) == Person.prototype ==> "+(Object.getPrototypeOf(person2) == Person.prototype));//true
+			alert("Object.getPrototypeOf(person1).name ==> "+(Object.getPrototypeOf(person1).name));
+			alert("person1.constructor == Person ==> "+(person1.constructor == Person));//true
+			alert("person1.constructor == Object ==> "+(person1.constructor == Object));//false
+			//----------------------------------------
+			function Person(){}
+			Person.prototype = {
+				name : "Nicolas",
+				age : 21,
+				job : "SSE",
+				sayName : function(){alert(this.name);}
+			};
+			var person3 = new Person();
+			alert("person3.constructor == Person ==> "+(person3.constructor == Person));//false
+			alert("person3.constructor == Object ==> "+(person3.constructor == Object));//true
+			//----------------------------------------
+			function Person(){}
+			var person4 = new Person();// without sayName yet
+			Person.prototype = {
+				contructor : Person, // set constructor Person
+				name : "Nicolas",
+				age : 21,
+				job : "SSE",
+				sayName : function(){alert(this.name);}
+			};
+
+			alert("person4.constructor == Person ==> "+(person4.constructor == Person));//true
+			alert("person4.constructor == Object ==> "+(person4.constructor == Object));//false
+			alert(person4.sayName);//undefined
+		//------------------!!!populated way to create object!!!----------------------
+		//3, merge constructor and prototype --------------------------------------------------------------------------------
+			function Person(name, age, job){
+				this.name = name;						//fields in constructor
+				this.age = age;
+				this.job = job;
+			}
+			Person.prototype = {
+				contructor : Person, 
+				sayName : function(){alert(this.name);}	//function in prototype
+			};
+			var person5 = new Person("bill",30,"sse");
+			var person6 = new Person("bill2",31,"se");
+			alert(person5.name === person6.name);//false
+			alert(person5.sayName === person6.sayName);	// true
+		//4, dynstic prototype --------------------------------------------------------------------------------
+			function Person(name, age, job){
+				this.name = name;
+				this.age = age;
+				this.job = job;
+				if(typeof this.sayName != "function"){  //just define one time
+					Person.prototype.sayName = function(){
+						alert(this.name);
+					}
+				}
+			}
+			
+		//5, merge factory and constructor --------------------------------------------------------------------------------
+			function Person(name, age, job){
+				var o = new Object();
+				o.name = name;
+				o.age = age;
+				o.job = job;
+				o.sayName = function(){
+					alert(this.name);
+				}
+				return o;
+			}
+			var person6 = new Person("bill",30,"sse");
+
+		
 	//-------------------继承---------------------
 	function SuperType(){
 		this.color = ["red","blue","green"];
@@ -223,7 +342,7 @@ javascript高级程序设计
 
 
 	//----------------------------------------
-	arguments.callee 解决function引用被赋值null
+	arguments.callee 解决function引用被改变或赋值null
 	
 	
 	
@@ -242,7 +361,7 @@ javascript高级程序设计
 		var result = func({name:"1"},{name:"2"});	//执行内部匿名function
 		func = null;								//手动销毁内部匿名function，outterFunction作用域才能销毁
 		//----------------------------------------
-		//2，没有块级作用域，所以闭包可访问的外部作用域的改变，会影响闭包
+		//2，没有块级作用域，所以闭包可访问的外部作用域的改变，会影响闭包-------------------------------------------------
 		function createFunction(){
 			var result = new Array();
 			for(var i = 0; i &lt; 10; i++){
@@ -252,7 +371,7 @@ javascript高级程序设计
 			}
 			return result;
 		}
-		//----------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------------
 		function createFunction(){
 			var result = new Array();
 			for(var i = 0; i &lt; 10; i++){
@@ -262,7 +381,7 @@ javascript高级程序设计
 			}
 			return result;
 		}
-		//----------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------------
 		//3，this的转变
 		var name = "The Window";
 		var obj = {
@@ -274,7 +393,7 @@ javascript高级程序设计
 		alert(obj.getName());//"My Window"
 		alert((obj.getName)());//"My Window"
 		alert((obj.getName = obj.getName )());		//"The Window" 复制后，getName的this从原来的obj的作用域变成新的function的作用域
-		//----------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------------
 		//4，模仿块级作用域 ==>针对没有块级作用域
 		function outputNumber(count){
 			(function(){
@@ -285,12 +404,12 @@ javascript高级程序设计
 			})();
 			//i不能在这里调用了
 		}
-		//----------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------------
 		也常被用来 区隔 全局作用域
 		(function(){
 				//块级作用域
 		})();
-		//----------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------------
 		//5，getter，setter 将私有变量通过公有function泄露出去，露出内部function闭包访问作用域。
 		function MyObject(){
 			var privateVariable = 10;//私有变量
@@ -303,7 +422,7 @@ javascript高级程序设计
 				return privateFunction();
 			};
 		}
-		//----------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------------
 		(function(){
 			var privateVariable = 10;//私有变量
 			function privateFunction(){//私有function
@@ -320,7 +439,7 @@ javascript高级程序设计
 		var mo = new MyObject();
 		mo.publicFunction();//privateVariable和privateFunction变成全局作用域
 		
-		//----------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------------
 		//模块模式
 		var singleton = (function(){
 			var privateVariable = 10;//私有变量
@@ -350,27 +469,43 @@ javascript高级程序设计
 			};
 			return obj;
 		})();
+第十三章事件
+	事件捕获：dom tree 由上往下
+	事件冒泡：dom tree 有下往上
+	DOM事件流：事件捕获阶段==>处于目标阶段==>事件冒泡阶段
+	
+	
+	&lt;form method="post"&gt;
+		&lt;input name="itext" type="text" value="" &gt;
+		&lt;input name="ibutton" type="button" value="ok!!!!" onclick="
+	<em>
+			with(document){
+				with(this.form){
+					with(this){
+						alert(itext.value);
+					}
+				}
+			}
+	</em>
+		"&gt;
+	&lt;/form&gt;
 	
 </pre>
+<form method="post">
+	<input name="itext" type="text" value="" >
+	<input name="ibutton" type="button" value="ok!!!!" onclick="
 
-
-<script>
-(function(){
-			var privateVariable = 10;//私有变量
-			function privateFunction(){//私有function
-				return false;
+		with(document){
+			with(this.form){
+				with(this){
+				    alert(itext.value);
+				}
 			}
-			
-			MyObject = function(){};//没有var，所以MyObject是全局变量
-			MyObject.prototype.publicFunction = function(){//公有function
-				privateVariable++;
-				return privateFunction();
-			};
-		})();
-		
-		var mo = new MyObject();
+		}
+	
+	">
+</form>
 
-alert(mo.publicFunction());
-</script>
+
 </body>
 </html>
