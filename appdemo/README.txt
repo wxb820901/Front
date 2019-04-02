@@ -1,7 +1,8 @@
 --use express generator to create project
 npm install express-generator -g 
 express appDemo
-
+--install dependency required
+npm install
 --start locally
 cd <env>/appDemo
 npm start
