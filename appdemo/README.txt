@@ -14,3 +14,9 @@ docker build . -t appdemo:v1
 
 --run docker container 
 docker run -it appdemo:v1
+
+
+--next step of node demo
+
+by now I can create express node project and put some simple route ans start it on docker 
+next step is rest server and client, json content parser and generate 
