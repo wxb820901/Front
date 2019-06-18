@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ASSESSMENT</title>
+</head>
+<body>
+<pre>
+Java Web Start Tools
+	javaws
+		java.exe用于启动window console  控制台程序
+		javaw.exe用于启动 GUI程序
+		javaws.exe用于web程序。
+		jvm.dll就是java虚拟机规范在windows平台上的一种实现
+		
+		java.exe  和 javaw.exe两种运行方式的区别还有一点  
+			java运行GUI以后堵塞在那里直到窗口关闭。
+			javaw运行GUI后 直接就可以进行下一条命令的运行了。
+			
+		javaws.exe 用于Starts Java Web Start.
+			javaws [ run-options ] jnlp
+			javaws [ control-options ]
+		what is Java Web Start？
+			deploy java on web and 
+		jnlp是什么？
+			Java Network Launching Protocol 
+			是java提供的一种让你可以通过浏览器直接执行java应用程序的途径
+		
+			新建一个web应用程序,写一个测试类Test.java,把这个测试类打成一个jar包,命名为jnpl.jar,放入项目的根目录下面WebRoot 
+			新建一个jnlp后缀的文件名称为testjnpl.jnlp,并放入到项目的根目录下面, 
+			配置代码如下 
+			&lt;?xml version="1.0" encoding="UTF-8"?&gt; 
+			&lt;!--此处的地址是jnlp访问的路径--&gt; 
+			&lt;jnlp codebase="http://10.11.0.138:8080/JNPLTest/" name="SeatingChartBuilder" 
+			   href="testjnpl.jnlp"&gt; 
+			   &lt;information&gt; 
+			        &lt;title&gt;Seating Chart Builder&lt;/title&gt; 
+			        &lt;vendor&gt;Etix.com, Inc.&lt;/vendor&gt; 
+			        &lt;offline-allowed/&gt; 
+			&lt;description&gt;An Application To Seating Chart Builder!&lt;/description&gt; 
+			   &lt;/information&gt; 
+			   &lt;application-desc main-class="com.Test"/&gt; 
+			   &lt;security&gt; 
+			      &lt;all-permissions/&gt; 
+			   &lt;/security&gt; 
+			   &lt;resources&gt; 
+			        &lt;j2se version="1.4+"/&gt; 
+			        &lt;jar href="jnpl.jar" /&gt; 
+			    &lt;/resources&gt; 
+			&lt;/jnlp&gt; 
+			为生成的jnlp.jar签名 
+			(1)首先生成一个证书,命令如下,这个命令会在当前的目录下生成一个名称为myjnlp.keystore的文件 
+			keytool -genkey -alias myjnlp -validity 123456 -keypass 123456 -storepass 123456 -keystore myjnlp.keystore -dname "CN=nokiaguy, OU=nokiaguy, O=D, L=CA, S=CA, C=CN" 
+			(2)把生成的myjnlp.keystore放到项目的根目录下面,对jnpl.jar进行签名,并把签名后的jar文件放到项目根目录下面,这里的myjnlp就是生成证书时的别名myjnlp 
+			jarsigner -keystore myjnlp.keystore -storepass 123456 -keypass 123456 jnpl.jar myjnlp 
+			访问http://10.11.0.138:8080/JNPLTest/testjnpl.jnlp运行jnlp文件,成功!
+			
+			
+Internationalization
+	native2ascii: Creates localizable applications by converting a file with characters in any supported character encoding to one with ASCII and/or Unicode escapes (\uxxxx) notation for all characters that are not part of the ASCII character set, or vice versa.
+	native2ascii [ inputfile ] [ outputfile ]
+		inputfile
+			The encoded file to be converted to ASCII.
+		outputfile
+			The converted ASCII file.
+	native2ascii 用来将别的文本类文件（比如*.txt,*.ini,*.properties,*.java等等）编码转为Unicode编码。
+	
+	常用于把含有中文的properties文件转成unicode的文件
+	
+Create and Build Applications
+	extcheck: Detects version conflicts between a target Java Archive (JAR) file and currently installed extension JAR files.
+	jar: Combines multiple files into a single JAR file.  	*like zip and unzip
+	java: Starts a Java application.
+	javac: Reads Java class and interface definitions and compiles them into bytecode and class files.
+	javap: Disassembles one or more class files. 			*just the content click class in eclipse, reverse operation for javac
+	jdb: Finds and fixes bugs in Java platform programs.
+		jdb XXXWithMain.class
+		>help
+		>#list all command such as 
+		'stop in class id and method' 
+		'stop at class id and line' 
+		'step to run current line'
+		'stepi to run current statement'
+		...
+	jdeps: Java class dependency analyzer
+		jdeps org.springframework.core-3.0.5.RELEASE.jar 
+		jdeps target
+		
+Deploy Applications and Applets
+	pack200: Packages a JAR file into a compressed pack200 file for web deployment.
+		pack200 myarchive.pack.gz myarchive.jar
+		pack200 --repack myarchive-packer.jar myarchive.jar
+		pack200 --no-gzip myarchive.pack myarchive.jar
+	unpack200: Transforms a packed file produced by pack200(1) into a JAR file for web deployment.
+	javapackager: Performs tasks related to packaging and signing Java and JavaFX applications.
+	JavaFX: 用java按照fxml布局文件生成界面。
+
+Monitor the JVM
+	jps: Experimental. Lists the instrumented Java Virtual Machines on the target system. experimental and unsupported. *like linux command ps
+		jps -lmvV
+	jstat: Experimental. Monitors Java virtual machine statistics
+	
+	jstatd: Experimental. Monitors Java Virtual Machines and enables remote monitoring tools to attach to JVMs.
+	jmc: Starts Java Mission Controla tool for monitoring and managing running Java applications and JVMs.
+		ui for CPU and memory
+	jcmd: Sends diagnostic command requests to a running JVM.
+		jcmd [-l|-h|-help]
+		jcmd pid|main-class PerfCounter.print
+		jcmd pid|main-class -f filename
+		jcmd pid|main-class command[ arguments]
+	jinfo: Experimental. Generates configuration information.
+
+	jhat: Experimental. Analyzes the Java heap.
+		jhat [ options ] heap-dump-file
+			Heap dump is generated when an OutOfMemoryError is thrown 
+			by specifying the 
+			-XX:+HeapDumpOnOutOfMemoryError Java Virtual Machine (JVM) option.
+			
+	jsadebugd: Experimental. Attaches to a Java process or core file and acts as a debug server.
+		jsadebugd pid [ server-id ]
+		jsadebugd executable core [ server-id ]
+		
+	jmap: Experimental. Prints shared object memory maps or heap memory details for a process, core file, or remote debug server.
+		jmap [ options ] pid
+		jmap [ options ] executable core
+		jmap [ options ] [ pid ] server-id@ ] remote-hostname-or-IP
+		jmap -histo:live <PID>
+	
+	jstack: Experimental. Prints Java thread stack traces for a Java process, core file, or remote debug server.
+		jstack [ options ] pid
+		jstack [ options ] executable core
+		jstack [ options ] [ server-id@ ] remote-hostname-or-IP
+		jstack -l <PID>
+		
+Security
+	keytool: Manages a keystore (database) of cryptographic keys, X.509 certificate chains, and trusted certificates.
+		https://blog.csdn.net/liumiaocn/article/details/61921014
+	jarsigner: Signs and verifies Java Archive (JAR) files.
+		https://blog.csdn.net/fivedoumi/article/details/32328673
+	policytool: Reads and writes a plain text policy file based on user input through the utility GUI.
+		GUI got manage policy, mapping codebase and permissions
+		grant codeBase "http://docs.oracle.com/javase/tutorial/security/tour1/examples/" {  
+			permission java.io.FilePermission "writetest", "write";  
+		};
+	kinit,klist,ktab
+		https://www.jianshu.com/p/fc2d2dbd510b
+HotSpot VM overview
+	https://dzone.com/articles/jvm-architecture-explained
+	
+	Class Loader Subsystem
+		Boot Strap ClassLoader – jre\lib
+		Extension ClassLoader – jre\lib\ext
+		Application ClassLoader – Responsible for loading Application Level Classpath, path mentioned Environment Variable etc.
+
+....
+
+
+
+
+
+Monitor Java Applications
+	jconsole: Starts a graphical console that lets you monitor and manage Java applications.
+	jvisualvm: Visually monitors, troubleshoots, and profiles Java applications.
+</pre>
+</body>
+</html>

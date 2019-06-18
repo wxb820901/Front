@@ -489,7 +489,47 @@ javascript高级程序设计
 	</em>
 		"&gt;
 	&lt;/form&gt;
+
+
+
+重要内容插播
+	display: none
+		none 是 CSS 1 就提出来的属性，
+		将元素设置为none的时候既不会占据空间，
+		也无法显示，
+		相当于该元素不存在。
+		该属性可以用来改善重排与重绘，
+		同时我也经常用它来做模态窗等效果。
+	display: inline
+		inline也是 CSS 1 提出的属性，
+		它主要用来设置行内元素属性，
+		设置了该属性之后设置高度、宽度都无效，
+		同时text-align属性设置也无效，
+		但是设置了line-height会让inline元素居中
+		同时从上图可以看到两个inline标签之间出现了奇怪的间隔，
+		改间隔的原因是div换行产生的换行空白，解决办法
+			将两个inline标签写到一行
+	display: block
+		设置元素为块状元素，
+		如果不指定宽高，
+		默认会继承父元素的宽度，
+		并且独占一行，
+		即使宽度有剩余也会独占一行，
+		高度一般以子元素撑开的高度为准，
+		当然也可以自己设置宽度和高度。
 	
+	
+	
+	
+	
+	
+其他
+开根号HTML
+<span style='font-size:100px;'>
+&#8730;<span style='text-decoration: overline;'>1212</span>
+</span>
+
+
 </pre>
 <form method="post">
 	<input name="itext" type="text" value="" >
